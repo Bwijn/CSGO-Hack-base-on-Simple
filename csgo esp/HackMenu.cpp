@@ -13,18 +13,14 @@ Options options;
 
 WNDPROC oWndProc;
 extern LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-void Menu::showPlayerList()
-{
 
-}
-
-void Menu::Shutdown()
-{
-	SetWindowLongPtr(GameScreenWindow, GWL_WNDPROC, (LONG_PTR)oWndProc);
-
-	ImGui_ImplDX9_Shutdown();
-	//cl_mouseenable->SetValue(true);
-}
+//void Menu::Shutdown()
+//{
+//	SetWindowLongPtr(GameScreenWindow, GWL_WNDPROC, (LONG_PTR)oWndProc);
+//
+//	ImGui_ImplDX9_Shutdown();
+//	//cl_mouseenable->SetValue(true);
+//}
 
 void Menu::Show() {
 	_show = !_show;
@@ -84,13 +80,20 @@ void Menu::Render() {
 	{
 		if (ImGui::BeginTabItem(u8"透视"))
 		{
-			ImGui::Checkbox(u8"透视功能", &options.ESP_Draw); // todo 
+			ImGui::Checkbox(u8"透视功能", &options.ESP_Draw); // todo 改为药丸按钮
 			//ImGui::RadioButton("radio a", &e, 0); ImGui::SameLine();
 			//ImGui::RadioButton("radio b", &e, 1); ImGui::SameLine();
 
 
 			ImGui::Checkbox(u8"透视线", &options.SnapLine); ImGui::SameLine();
 			ImGui::Checkbox(u8"透视框", &options.ESP_BOX);
+			ImGui::Checkbox(u8"名字透视", &options.esp_player_names);
+			ImGui::Checkbox(u8"骨骼透视", &options.ESP_Bones);
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem(u8"自瞄"))
+		{
+				ImGui::Checkbox(u8"自瞄开启", &options.aimbot);
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem(u8"伞兵功能 (待开发)"))
@@ -102,12 +105,18 @@ void Menu::Render() {
 		}
 		if (ImGui::BeginTabItem(u8"调试"))
 		{
+
+			//if (ImGui::Button(u8"当前眼睛位置"))
+			//{
+			//	auto my_eye_pos = localPlayer->GetHitboxPos(HITBOX_HEAD);
+			//	ImGui::Text(u8"当前眼睛位置%f %f %f", my_eye_pos.x, my_eye_pos.y, my_eye_pos.z);
+			//}
 			ImGui::Text(u8"当前ID (clientId): %d", &localPlayer->clientId);
 
 			ImGui::SliderInt("slider int", &options.PlayerIndex, 0, 10);
 
 			auto ent = reinterpret_cast<Ent*>(entitylist->GetClientEntity(options.PlayerIndex));
-			ImGui::TextColored(ImVec4(0.5f, 0.0f, 0.0f, 1.0f),u8"游戏中最大Entity数值 %d", entitylist->GetMaxEntities());
+			ImGui::TextColored(ImVec4(0.5f, 0.0f, 0.0f, 1.0f), u8"游戏中最大Entity数值 %d", entitylist->GetMaxEntities());
 			ImGui::Text(u8"当前CBasePlayer的指针: %p", ent);
 
 			if (ent && ent->IsPlayer()) {
@@ -193,4 +202,9 @@ LRESULT __stdcall WndProc(const HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		return true;
 
 	return CallWindowProc(oWndProc, hWnd, uMsg, wParam, lParam);
+}
+Menu::~Menu() {
+	SetWindowLongPtr(GameScreenWindow, GWL_WNDPROC, (LONG_PTR)oWndProc);
+
+	ImGui_ImplDX9_Shutdown();
 }

@@ -18,10 +18,10 @@ public:
 	bool init();
 	void InitImGui(LPDIRECT3DDEVICE9 pDevice);
 	void Show();
-	void Shutdown();
+	~Menu();
 
 
-	void showPlayerList();
+	//void showPlayerList();
 public:
 	bool _show = false;
 
@@ -51,9 +51,13 @@ public:
 
 	bool SnapLine=false;
 	bool ESP_BOX=false;
+	bool esp_player_names = false;
+	bool ESP_Bones = false;
 // debug
 	int PlayerIndex = 0;
+
 	
-	//};
+	//AimBot
+	bool aimbot = false;
 
 };

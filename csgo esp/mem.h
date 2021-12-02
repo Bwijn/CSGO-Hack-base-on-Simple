@@ -4,7 +4,10 @@
 bool HookBytes(char* src, char* dst, int len, byte* stolen_bytes);
 
 
-char* TrampHook(char* src, char* dst, unsigned int len);
-void unhook(char* src, char* dst, unsigned int len);
+bool InstallBack(void* src, void* byteList, unsigned int bytesLen);
+
+char* TrampHook(char* src, unsigned int len);
+
+//bool InstallBack(void* dst, void* byteList);
 
 

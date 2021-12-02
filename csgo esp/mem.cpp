@@ -28,7 +28,7 @@
 	return true;
 }
 
-char* TrampHook(char* src, char* dst, unsigned int len)
+char* TrampHook(char* src, unsigned int len)
 {
 	if (len < 5) return 0;
 
@@ -55,22 +55,17 @@ char* TrampHook(char* src, char* dst, unsigned int len)
 	//else return nullptr;
 }
 
-void unhook(char* src, char* dst, unsigned int len) {
-	//HMODULE  hmodule = GetModuleHandle(L"csgo esp.dll");
-	//if (hmodule) {// 不返回null 就成功
-	//	FreeLibraryAndExitThread(hmodule, 0);
-
-	//};
-	//恢复hook
-	//int src_size =sizeof(d3d9Device_42_bytes);
+bool InstallBack(void*src ,void*byteList,unsigned int bytesLen) {
 	DWORD oldProtect = 0x0, temp = 0x0;
-	VirtualProtect(src, len, PAGE_EXECUTE_READWRITE, &oldProtect);
+	
+	VirtualProtect(src, bytesLen, PAGE_EXECUTE_READWRITE, &oldProtect);
+//auto len = 
+	memcpy(src,byteList, bytesLen);
 
-	//memcpy(src,dst, sizeof(d3d9Device_42_bytes));
 
-
-	VirtualProtect(src, len, oldProtect, &temp);
+	VirtualProtect(src, bytesLen, oldProtect, &temp);
 
 	
+	return true;
 	//FreeLibraryAndExitThread(hModule, 0);
 }

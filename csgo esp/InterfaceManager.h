@@ -7,6 +7,7 @@ extern LPDIRECT3DDEVICE9 pD3DDevice;
 extern IClientMode* g_pIClientMode;
 extern IVEngineClient* g_pIVEngineClient;
 extern IPanel* g_VGuiPanel ;
+extern IVModelInfoClient* g_MdlInfo;
 
 extern ISurface* g_VGuiSurface;
 

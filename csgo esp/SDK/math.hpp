@@ -1,8 +1,9 @@
 #pragma once
 
-//#include "../valve_sdk/sdk.hpp"
-#include"../pch.h"
 #include <DirectXMath.h>
+#include"Vector.hpp"
+#include"QAngle.hpp"
+#include"VMatrix.hpp"
 
 #define RAD2DEG(x) DirectX::XMConvertToDegrees(x)
 #define DEG2RAD(x) DirectX::XMConvertToRadians(x)

@@ -1,7 +1,7 @@
 ﻿// dllmain.cpp : 定义 DLL 应用程序的入口点。
 #include "pch.h"
 
-DWORD WINAPI Init(LPVOID lpThreadParameter)
+DWORD WINAPI Init(LPVOID base)
 
 {
 
@@ -18,12 +18,13 @@ DWORD WINAPI Init(LPVOID lpThreadParameter)
         while (!exit_flag)
         {
             
-            Sleep(10000);
+            Sleep(1000);
         }
-        Hooks::unloadhook();
+        //Hooks::Shutdown();
 
         
-        FreeLibraryAndExitThread(GetModuleHandle(L"csgo esp.dll"), TRUE);
+        FreeLibraryAndExitThread(static_cast<HMODULE>(base), 1);
+
 
 
         return true;
@@ -35,9 +36,26 @@ DWORD WINAPI Init(LPVOID lpThreadParameter)
 }
 
 
+
+BOOL WINAPI OnDllDetach()
+{
+//#ifdef _DEBUG
+//    Utils::DetachConsole();
+//#endif
+
+    Hooks::Shutdown();
+
+    
+    delete pmenu;
+    //Menu::Get().Shutdown();
+    return TRUE;
+}
+
+
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+    _In_opt_  LPVOID    lpvReserved
+
                      )
 {
     switch (ul_reason_for_call)
@@ -56,10 +74,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         break;
 
     case DLL_PROCESS_DETACH:
-        //unloadhack();
+        if (lpvReserved == nullptr)
+            return OnDllDetach();
+        return TRUE;
 
-        //CreateThread(nullptr, 0, ExitThread, hModule, 0, nullptr);
-        //MessageBox(0, L"PROCESS_DETACH", 0, 0);
         break;
 
 

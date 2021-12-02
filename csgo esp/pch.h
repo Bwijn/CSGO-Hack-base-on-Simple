@@ -34,16 +34,17 @@
 #include"CSGO_offsets.h"
 
 //#include"cvh.hpp" // 测试用 Cheat项目中的源码虚函数hook类
-#include"tools/math.hpp"
+//#include"math.hpp"
+#include"mem.h"
 #include"guidedhacking_cvmt.hpp"
 #include"Cvmtf_hook.h"
-#include"mem.h"
 #include"hook.h"
 #include"InterfaceManager.h"
 #include"HackMenu.h"
 #include"BunnyHop.h"
 #include"Visual.h"
 #include"Player.h"
+#include "aimbot.h"
 
 
 

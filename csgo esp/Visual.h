@@ -9,8 +9,12 @@ public:
 	void	RenderCrosshair();
 	void RenderSnapline();
 	void RenderBox();
+	void RenderBoneLine();
+	void RenderBones();
 	bool Begin(Ent* pl);
+	void RenderName();
 
+	bool CreateFonts();
 private:
 
 };

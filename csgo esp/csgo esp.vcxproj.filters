@@ -22,9 +22,6 @@
     <Filter Include="源文件\sdk">
       <UniqueIdentifier>{0348ae71-cc05-43bc-b1c2-d8afd18b6da1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="tools">
-      <UniqueIdentifier>{bf8f8bd6-2e04-4e3d-8bba-908c5e3479ee}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -123,8 +120,38 @@
     <ClInclude Include="Player.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="tools\math.hpp">
-      <Filter>tools</Filter>
+    <ClInclude Include="SDK\C_BasePlayer.h">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Color.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\Studio.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientEntity.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientRenderable.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\math.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientUnknown.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientNetworkable.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IClientThinkable.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="SDK\IVModelInfoClient.hpp">
+      <Filter>sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="aimbot.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -170,13 +197,7 @@
     <ClCompile Include="Cvmtf_hook.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="SDK\Vector2D.cpp">
-      <Filter>sdk</Filter>
-    </ClCompile>
     <ClCompile Include="SDK\Vector4D.cpp">
-      <Filter>sdk</Filter>
-    </ClCompile>
-    <ClCompile Include="SDK\VMatrix.cpp">
       <Filter>sdk</Filter>
     </ClCompile>
     <ClCompile Include="Visual.cpp">
@@ -188,8 +209,17 @@
     <ClCompile Include="Player.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="tools\math.cpp">
-      <Filter>tools</Filter>
+    <ClCompile Include="SDK\VMatrix.cpp">
+      <Filter>源文件\sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\Vector2D.cpp">
+      <Filter>源文件\sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="SDK\math.cpp">
+      <Filter>源文件\sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="aimbot.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

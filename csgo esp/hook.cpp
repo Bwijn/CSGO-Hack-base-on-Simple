@@ -1,17 +1,18 @@
 #include "pch.h"
 
-
+#include<math.h>
 HWND GameScreenWindow; // 游戏窗口句柄
+LPDIRECT3DDEVICE9 pD3DDevice;//全局的d3d9设备指针
 
 //vmtf_hook hlclient_hook;
 // HOOK CLASS OBJECT -----------------------
 VmtHook* vmt_IClientMode;
 VmtHook* vguipanel_hook;
 
-vmtf_hook direct3d_hook;
+vmtf_hook* direct3d_hook;
 
 
-CreateMove oCreateMove;
+
 
 //--------------------------------------------------------------------------------
 void __stdcall hkPaintTraverse(vgui::VPANEL panel, bool forceRepaint, bool allowForce)
@@ -53,11 +54,12 @@ void __stdcall hkPaintTraverse(vgui::VPANEL panel, bool forceRepaint, bool allow
 				if (i < 65 && !entity->isDormant && entity->IsAlive()) {
 
 					if (visual.Begin(entity)) {
-						if (options.SnapLine)
-							visual.RenderSnapline();
-						if (options.ESP_BOX)
+						if (options.SnapLine)	visual.RenderSnapline();
+						if (options.ESP_BOX)	visual.RenderBox();
+						if (options.esp_player_names)     visual.RenderName();
+						if (options.ESP_Bones)     visual.RenderBones();
 
-							visual.RenderBox();
+
 					}
 				}
 			}
@@ -83,7 +85,7 @@ HRESULT APIENTRY hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 		pmenu->InitImGui(pDevice);
 		MenuInitFlag = true;
 	}
-	auto	oEndScene = direct3d_hook.get_original_byDetours<EndScene>();
+	auto	oEndScene = direct3d_hook->get_original_byDetours<EndScene>();
 	//auto	oEndScene = v_hook->GetOriginalFunction<EndScene>(42);
 
 	//if (bInit == false)
@@ -103,14 +105,17 @@ HRESULT APIENTRY hkEndScene(LPDIRECT3DDEVICE9 pDevice)
 
 bool __fastcall CreateMoveFn(void* thisptr, void* not_edx, float SampleTime, CUserCmd* cmd)
 {
-	auto pLocal = reinterpret_cast<Ent*>(entitylist->GetClientEntity(g_pIVEngineClient->GetLocalPlayer())); // TODO 替换为全局的localplayer 
+auto pLocal=	reinterpret_cast<Ent*>(entitylist->GetClientEntity(g_pIVEngineClient->GetLocalPlayer()));
 
-	//lock view
+
+
+	//伞兵功能 锁视角
 	if (options.LockViewAngle)
 	{
 		cmd->viewangles.y = 90;
 		cmd->viewangles.x = 0;
 	}
+
 	//if (!cmd->command_number)
 	//	return true; // Check digit
 	if (options.BunnyHop) {
@@ -124,7 +129,7 @@ bool __fastcall CreateMoveFn(void* thisptr, void* not_edx, float SampleTime, CUs
 		}
 		else if (cmd->buttons & IN_JUMP)
 		{
-			if (pLocal->m_fFlags & FL_ONGROUND)
+			if (localPlayer->m_fFlags & FL_ONGROUND)
 			{
 				bLastJumped = true;
 				bShouldFake = true;
@@ -143,13 +148,88 @@ bool __fastcall CreateMoveFn(void* thisptr, void* not_edx, float SampleTime, CUs
 	}
 	//auto oCM = vmt_IClientMode->GetOriginalFunction<CreateMove>(24);
 	//oCM(SampleTime, cmd);
+	if (options.aimbot&&(cmd->buttons&IN_ATTACK))
+	{
+		// todo 选头 选身子
+		Aimbot::aimTarget(cmd, pLocal);
+	
+
+	}
 	return true;
+}
+
+
+
+
+bool GetD3D9Device()
+{
+
+	IDirect3D9* pD3D = Direct3DCreate9(D3D_SDK_VERSION);
+
+	if (!pD3D)
+		return false;
+
+	//IDirect3DDevice9* pDummyDevice = NULL;
+
+	// options to create dummy device
+	D3DPRESENT_PARAMETERS d3dpp = {};
+	d3dpp.Windowed = false;
+	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dpp.hDeviceWindow = GameScreenWindow;//  hwnd gamewindow
+
+	HRESULT dummyDeviceCreated = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pD3DDevice);
+
+	if (dummyDeviceCreated != S_OK)
+	{
+		// may fail in windowed fullscreen mode, trying again with windowed mode
+		d3dpp.Windowed = !d3dpp.Windowed;
+
+		dummyDeviceCreated = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pD3DDevice);
+
+		if (dummyDeviceCreated != S_OK)
+		{
+
+			pD3D->Release();
+			return false;
+		}
+	}
+
+	//auto vptr = *(void***)pD3DDevice;
+	//SIZE_T ulOldProtect = 0;
+	//VirtualProtect(&vptr[42], sizeof(void*), PAGE_EXECUTE_READWRITE, &ulOldProtect);
+	//oEndScene = (EndScene)vptr[42];
+	//auto aa = (uintptr_t)hkEndScene;
+	//vptr[42] = hkEndScene;
+	//赋给全局的 pD3DDevice 指针
+   //pD3DDevice = pDummyDevice;
+	if (pD3DDevice)
+	{
+		pD3D->Release();
+		//pD3DDevice->Release(); 
+
+
+		return true;
+
+	}
+	else
+	{
+		return false;
+	}
+
+	//pD3DDevice->Release();
+	//
 }
 
 bool Hooks::HookInit() {
 
-	direct3d_hook.setup(pD3DDevice);
-	direct3d_hook.hookByDetours<EndScene>((char*)hkEndScene, 42, 7);
+	//&pD3DDevice => GetD3D9Device;
+	if (!GetD3D9Device()) {
+		Beep(500, 1200);
+	};
+
+	direct3d_hook = new vmtf_hook(pD3DDevice);//
+
+	direct3d_hook->hookByDetours((char*)hkEndScene, index::EndScene, 7);
 
 	//direct3d_hook.setup(pD3DDevice);
 	//direct3d_hook.hookByIndex(42, hkEndScene);
@@ -165,6 +245,8 @@ bool Hooks::HookInit() {
 	vguipanel_hook = new VmtHook(reinterpret_cast<void*>(g_VGuiPanel));
 	vguipanel_hook->HookFunction(hkPaintTraverse, 41);
 
+	visual.CreateFonts();
+
 
 
 	return true;
@@ -172,11 +254,27 @@ bool Hooks::HookInit() {
 
 }
 
-void Hooks::unloadhook() {
+void Hooks::Shutdown()
+{
 
+	vmt_IClientMode->UnhookFunction(index::CreateMove);
+	vguipanel_hook->UnhookFunction(index::PaintTraverse);
+	direct3d_hook->unhook(index::EndScene);
 
-	//pmenu->Shutdown();
+	delete direct3d_hook;
+	delete vmt_IClientMode;
+	delete vguipanel_hook;
+	pD3DDevice->Release();
 
-	//pD3DDevice->Release();
+	//auto r=	direct3d_hook.
+
 }
+
+//void Hooks::unloadhook() {
+//
+//
+//	//pmenu->Shutdown();
+//
+//	//pD3DDevice->Release();
+//}
 

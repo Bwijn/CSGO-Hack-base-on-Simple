@@ -8,11 +8,11 @@ IBaseClientDLL* g_CHLClient;
 IClientMode* g_pIClientMode;
 IVEngineClient* g_pIVEngineClient;
 ISurface* g_VGuiSurface = nullptr;
+IVModelInfoClient* g_MdlInfo = nullptr;
 
 IPanel* g_VGuiPanel = nullptr;
 
 
-LPDIRECT3DDEVICE9 pD3DDevice;
 std::size_t estimate_vftbl_length(std::uintptr_t** vftbl_start)
 {
 	MEMORY_BASIC_INFORMATION memInfo = { NULL };
@@ -25,67 +25,7 @@ std::size_t estimate_vftbl_length(std::uintptr_t** vftbl_start)
 
 	return m_nSize;
 }
-bool GetD3D9Device()
-{
-	//if (!pTable)
-	//	return false;
 
-	IDirect3D9* pD3D = Direct3DCreate9(D3D_SDK_VERSION);
-
-	if (!pD3D)
-		return false;
-
-	//IDirect3DDevice9* pDummyDevice = NULL;
-
-	// options to create dummy device
-	D3DPRESENT_PARAMETERS d3dpp = {};
-	d3dpp.Windowed = false;
-	d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dpp.hDeviceWindow = GameScreenWindow;//  hwnd gamewindow
-
-	HRESULT dummyDeviceCreated = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pD3DDevice);
-
-	if (dummyDeviceCreated != S_OK)
-	{
-		// may fail in windowed fullscreen mode, trying again with windowed mode
-		d3dpp.Windowed = !d3dpp.Windowed;
-
-		dummyDeviceCreated = pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dpp.hDeviceWindow, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &d3dpp, &pD3DDevice);
-
-		if (dummyDeviceCreated != S_OK)
-		{
-
-			pD3D->Release();
-			return false;
-		}
-	}
-
-	//auto vptr = *(void***)pD3DDevice;
-	//SIZE_T ulOldProtect = 0;
-	//VirtualProtect(&vptr[42], sizeof(void*), PAGE_EXECUTE_READWRITE, &ulOldProtect);
-	//oEndScene = (EndScene)vptr[42];
-	//auto aa = (uintptr_t)hkEndScene;
-	//vptr[42] = hkEndScene;
-	//赋给全局的 pD3DDevice 指针
-   //pD3DDevice = pDummyDevice;
-	if (pD3DDevice)
-	{
-		//pD3DDevice->Release();
-		pD3D->Release();
-
-		return true;
-
-	}
-	else
-	{
-		return false;
-	}
-
-	//pD3DDevice->Release();
-	//
-}
-
-//void* d3d9Device[119];
 
 namespace InterFace {
 
@@ -136,6 +76,8 @@ namespace InterFace {
 		g_VGuiSurface = reinterpret_cast<ISurface*> (GetInterFacePointer(L"vguimatsurface.dll", VGUI_SURFACE_INTERFACE_VERSION));
 		
 		g_VGuiPanel = reinterpret_cast<IPanel*> (GetInterFacePointer(L"vgui2.dll", VGUI_PANEL_INTERFACE_VERSION));
+		g_MdlInfo = reinterpret_cast<IVModelInfoClient*> (GetInterFacePointer(L"engine.dll", "VModelInfoClient004"));
+
 
 		//localPlayer.ent = *reinterpret_cast<Ent**>(GetModuleHandle(L"client.dll") + signatures::dwLocalPlayer);// todo 不应该在这里获取
 		// get g_pClientMode 
@@ -145,10 +87,7 @@ namespace InterFace {
 
 
 
-		//&pD3DDevice => GetD3D9Device;
-		if (!GetD3D9Device()) {
-			Beep(500, 1200);
-		};
+
 
 
 

@@ -91,7 +91,6 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;CSGOESP_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
@@ -159,6 +158,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="aimbot.h" />
     <ClInclude Include="BunnyHop.h" />
     <ClInclude Include="CSGO_offsets.h" />
     <ClInclude Include="Cvmtf_hook.h" />
@@ -166,9 +166,12 @@
     <ClInclude Include="hook.h" />
     <ClInclude Include="HackMenu.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="SDK\Color.hpp" />
     <ClInclude Include="SDK\csgoSDK.h" />
+    <ClInclude Include="SDK\C_BasePlayer.h" />
     <ClInclude Include="SDK\Enums.hpp" />
     <ClInclude Include="SDK\IAppSystem.hpp" />
+    <ClInclude Include="SDK\IClientEntity.hpp" />
     <ClInclude Include="SDK\IClientInterface.h" />
     <ClInclude Include="imgui\imconfig.h" />
     <ClInclude Include="imgui\imgui.h" />
@@ -181,19 +184,26 @@
     <ClInclude Include="InterfaceManager.h" />
     <ClInclude Include="mem.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SDK\IClientNetworkable.hpp" />
+    <ClInclude Include="SDK\IClientRenderable.hpp" />
+    <ClInclude Include="SDK\IClientThinkable.hpp" />
+    <ClInclude Include="SDK\IClientUnknown.hpp" />
     <ClInclude Include="SDK\IPanel.hpp" />
     <ClInclude Include="SDK\ISurface.hpp" />
     <ClInclude Include="SDK\IVEngineClient.hpp" />
+    <ClInclude Include="SDK\IVModelInfoClient.hpp" />
+    <ClInclude Include="SDK\math.hpp" />
     <ClInclude Include="SDK\QAngle.hpp" />
+    <ClInclude Include="SDK\Studio.hpp" />
     <ClInclude Include="SDK\usercmd.h" />
     <ClInclude Include="SDK\Vector.hpp" />
     <ClInclude Include="SDK\Vector2D.hpp" />
     <ClInclude Include="SDK\Vector4D.hpp" />
     <ClInclude Include="SDK\VMatrix.hpp" />
-    <ClInclude Include="tools\math.hpp" />
     <ClInclude Include="Visual.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="aimbot.cpp" />
     <ClCompile Include="BunnyHop.cpp" />
     <ClCompile Include="Cvmtf_hook.cpp" />
     <ClCompile Include="dllmain.cpp" />
@@ -210,10 +220,10 @@
     <ClCompile Include="mem.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SDK\Color.cpp" />
+    <ClCompile Include="SDK\math.cpp" />
     <ClCompile Include="SDK\Vector2D.cpp" />
     <ClCompile Include="SDK\Vector4D.cpp" />
     <ClCompile Include="SDK\VMatrix.cpp" />
-    <ClCompile Include="tools\math.cpp" />
     <ClCompile Include="Visual.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

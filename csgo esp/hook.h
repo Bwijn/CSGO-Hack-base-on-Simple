@@ -35,7 +35,7 @@ namespace Hooks
 
 	bool HookInit();
 
-	void unloadhook();
+	void Shutdown();
 
 	
 
@@ -47,7 +47,7 @@ namespace index
     constexpr auto EndScene = 42;
     constexpr auto Reset = 16;
     constexpr auto PaintTraverse = 41;
-    constexpr auto CreateMove = 21;
+    constexpr auto CreateMove = 24;
     constexpr auto PlaySound = 82;
     constexpr auto FrameStageNotify = 36;
     constexpr auto DrawModelExecute = 21;
